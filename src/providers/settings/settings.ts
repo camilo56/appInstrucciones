@@ -16,7 +16,15 @@ export class SettingsProvider {
     let promise = new Promise((resolve, promise) => {
       if(this.platform.is('cordova')){
 
+        this.storage.ready().then(() => {
+          return this.storage.get('setting')
+        }).then((val) =>{
+          if(val){ this.setting = val };
+          resolve();
+        })
+
       }else{
+
         if(localStorage.getItem('setting')){
           this.setting = JSON.parse(localStorage.getItem('setting'));
         }
@@ -29,7 +37,9 @@ export class SettingsProvider {
 
   saveStorage(){
     if(this.platform.is('cordova')){
-
+      this.storage.ready().then(() => {
+        this.storage.set('setting', this.setting);
+      })
     }else{
       localStorage.setItem('setting', JSON.stringify(this.setting));
     }
